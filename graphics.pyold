@@ -1,0 +1,49 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_standings(standings, title="Standings"):
+    teams = [t['name'] for t in standings]
+    points = [t['points'] for t in standings]
+    goalDiffs = [t['goalDiff'] for t in standings]
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.barh(teams[::-1], points[::-1], color='skyblue', label='Points')
+    ax.scatter(goalDiffs[::-1], teams[::-1], color='green', label='Goal Diff')
+    ax.set_xlabel("Points / Goal Diff")
+    ax.set_title(title)
+    ax.legend()
+    fig.tight_layout()
+    return fig
+
+def plot_team_radar(analysis, team_name=None):
+    if not team_name: team_name = "Team"
+    metrics = ['formScore', 'offensiveScore', 'defensiveScore', 'consistencyScore', 'disciplineScore', 'mentalStrength']
+    values = [analysis[m] for m in metrics]
+    labels = ['Form', 'Attack', 'Defense', 'Consistency', 'Discipline', 'Mental']
+    values += values[:1]
+    angles = np.linspace(0, 2 * np.pi, len(labels) + 1)
+    fig = plt.figure(figsize=(6,6))
+    ax = fig.add_subplot(111, polar=True)
+    ax.plot(angles, values, 'o-', linewidth=2)
+    ax.fill(angles, values, alpha=0.25)
+    ax.set_thetagrids(angles[:-1] * 180/np.pi, labels) # ax.set_thetagrids(angles * 180/np.pi, labels)
+    plt.title(f"Performance Radar: {team_name}")
+    return fig
+
+def plot_comparison(analysis1, analysis2, team1_name, team2_name):
+    metrics = ['formScore', 'offensiveScore', 'defensiveScore', 'consistencyScore', 'disciplineScore', 'mentalStrength']
+    labels = ['Form', 'Attack', 'Defense', 'Consistency', 'Discipline', 'Mental']
+    values1 = [analysis1[m] for m in metrics]
+    values2 = [analysis2[m] for m in metrics]
+    values1 += values1[:1]
+    values2 += values2[:1]
+    angles = np.linspace(0, 2 * np.pi, len(labels) + 1)
+    fig = plt.figure(figsize=(6,6))
+    ax = fig.add_subplot(111, polar=True)
+    ax.plot(angles, values1, 'o-', linewidth=2, label=team1_name)
+    ax.fill(angles, values1, alpha=0.25)
+    ax.plot(angles, values2, 'o-', linewidth=2, label=team2_name)
+    ax.fill(angles, values2, alpha=0.25)
+    ax.set_thetagrids(angles[:-1] * 180/np.pi, labels) # ax.set_thetagrids(angles * 180/np.pi, labels)
+    ax.legend()
+    plt.title(f"Performance Comparison: {team1_name} vs {team2_name}")
+    return fig
